@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: amctl-template-ambot-plugin
-Version: 0.1.2
+Version: 0.1.3
 Summary: amctl template: AmritaBot plugin with a WebUI page and frontend build pipeline
 Project-URL: Homepage, https://github.com/AmritaBot/amctl-template-ambot-plugin
 Project-URL: Source, https://github.com/AmritaBot/amctl-template-ambot-plugin
