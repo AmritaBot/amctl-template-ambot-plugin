@@ -32,7 +32,7 @@ my-plugin/
 │   ├── amrita-plugin.json  # 入口、产物目录、静态资源
 │   ├── package.json        # 依赖 @amrita-constant/webui-plugin-kit
 │   └── src/index.tsx       # 示例页面（Card / Input / Button / Badge）
-└── .github/workflows/      # push/PR 检查，release 时构建前端并发布到 PyPI
+└── .github/workflows/      # CI 检查
 ```
 
 项目名会被规整成三种形态：发行名 `amrita-plugin-my-plugin`、导入名
@@ -69,5 +69,3 @@ uv pip install --force-reinstall dist/*.whl   # 装进有 amctl 的环境
 amctl create -t ambot_plugin -n demo-panel --frozen -o /tmp/gen
 cd /tmp/gen/demo-panel/frontend && bun install && bun run typecheck && bun run build
 ```
-
-发布：建 release 后由 workflow 用 `PYPI_API_TOKEN` 推到 PyPI。

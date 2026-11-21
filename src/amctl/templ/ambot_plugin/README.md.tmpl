@@ -65,11 +65,6 @@ frontend/
 - 换图标：`webui.py` 里的 `icon`，取 lucide 图标名
 - 加图片等静态资源：放进 `frontend/src/`，在 `amrita-plugin.json` 的 `assets` 里登记
 
-## 打包发布
-
-`uv build` 会把 `{{ module }}/assets/` 一起打进 wheel。仓库自带的 publish workflow
-已经按顺序做了前端构建 → uv build → uv publish，不要再手动跳过第一步。
-
 ## 要求
 
 - AmritaBot >= {{ version }}（提供 `mount_plugin_assets` 与 `module_dir`）
