@@ -1,0 +1,24 @@
+LICENSE
+MANIFEST.in
+README.md
+pyproject.toml
+src/amctl/templ/ambot_plugin/.gitignore.tmpl
+src/amctl/templ/ambot_plugin/README.md.tmpl
+src/amctl/templ/ambot_plugin/__init__.py
+src/amctl/templ/ambot_plugin/pyproject.toml.tmpl
+src/amctl/templ/ambot_plugin/.github/workflows/ci.yml.pre
+src/amctl/templ/ambot_plugin/.github/workflows/publish.yml.pre
+src/amctl/templ/ambot_plugin/frontend/amrita-plugin.json.tmpl
+src/amctl/templ/ambot_plugin/frontend/package.json.tmpl
+src/amctl/templ/ambot_plugin/frontend/tsconfig.json.pre
+src/amctl/templ/ambot_plugin/frontend/src/index.css.tmpl
+src/amctl/templ/ambot_plugin/frontend/src/index.tsx.tmpl
+src/amctl/templ/ambot_plugin/{{ module }}/__init__.py.tmpl
+src/amctl/templ/ambot_plugin/{{ module }}/api.py.tmpl
+src/amctl/templ/ambot_plugin/{{ module }}/config.py.tmpl
+src/amctl/templ/ambot_plugin/{{ module }}/webui.py.tmpl
+src/amctl_template_ambot_plugin.egg-info/PKG-INFO
+src/amctl_template_ambot_plugin.egg-info/SOURCES.txt
+src/amctl_template_ambot_plugin.egg-info/dependency_links.txt
+src/amctl_template_ambot_plugin.egg-info/requires.txt
+src/amctl_template_ambot_plugin.egg-info/top_level.txt

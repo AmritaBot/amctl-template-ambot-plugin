@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import re
-from datetime import datetime, timezone
 from typing import Any, ClassVar
 
 from amctl.templating import BaseTemplate, TmplField, field
@@ -48,7 +47,6 @@ class ambotPluginTemplate(BaseTemplate):
                 # 同时是 /plugin-assets/<name>/ 的挂载名与页面路径
                 "asset": slug,
                 "page_title": name,
-                "created_at": datetime.now(timezone.utc).isoformat(),
             }
         )
         return ctx
