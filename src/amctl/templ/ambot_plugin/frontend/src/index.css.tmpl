@@ -1,0 +1,59 @@
+/* 页面自带样式：只影响本插件，不用跟着宿主的 Tailwind 配置走 */
+.{{ asset }}-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.{{ asset }}-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.{{ asset }}-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.{{ asset }}-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid rgba(128, 128, 128, 0.25);
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.{{ asset }}-item small {
+  opacity: 0.6;
+  font-variant-numeric: tabular-nums;
+}
+
+.{{ asset }}-empty {
+  padding: 12px 0;
+  opacity: 0.6;
+  font-size: 13px;
+}
+
+.{{ asset }}-error {
+  margin: 0 0 12px;
+  color: #d94a4a;
+  font-size: 13px;
+}
+
+.{{ asset }}-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 16px 0 0;
+  font-size: 13px;
+  opacity: 0.8;
+}

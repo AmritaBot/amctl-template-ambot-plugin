@@ -1,0 +1,55 @@
+"""页面用的 JSON 接口，注册在 ``/api/{{ asset }}`` 下。
+
+插件路由受 WebUI 登录中间件保护：未登录时 ``/api`` 前缀返回 401 JSON。
+所有响应统一走 ``ok()`` / ``fail()``，前端按 ``success`` 判断。
+"""
+
+from __future__ import annotations
+
+import asyncio
+from datetime import datetime
+from typing import Any
+
+from fastapi import APIRouter
+from pydantic import BaseModel, Field
+
+from amrita.plugins.webui.API import register_router
+from amrita.plugins.webui.service.response import fail, ok
+
+router = APIRouter()
+
+# 示例数据只放内存，重启即清空；接数据库时保持接口形状不变即可
+_items: list[dict[str, Any]] = []
+_lock = asyncio.Lock()
+
+
+class ItemIn(BaseModel):
+    text: str = Field(min_length=1, max_length=100)
+
+
+@router.get("/items")
+async def list_items() -> Any:
+    async with _lock:
+        items = list(_items)
+    return ok(data={"items": items, "total": len(items)})
+
+
+@router.post("/items")
+async def add_item(payload: ItemIn) -> Any:
+    text = payload.text.strip()
+    if not text:
+        return fail(400, "内容不能为空")
+    async with _lock:
+        _items.append(
+            {
+                "id": len(_items) + 1,
+                "text": text,
+                "created_at": datetime.now().isoformat(timespec="seconds"),
+            }
+        )
+        total = len(_items)
+    return ok("已添加", data={"total": total})
+
+
+# 必须在 import 期注册：晚于 driver.on_startup 的 catch-all 路由会被它抢先匹配
+register_router(router, prefix="/api/{{ asset }}", tags=["{{ name }}"])

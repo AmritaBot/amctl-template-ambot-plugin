@@ -1,0 +1,42 @@
+"""把前端产物挂到 ``/plugin-assets/{{ asset }}/`` 并注册侧边栏页面。
+
+这两步都只能在插件 import 期做：SPA 的 catch-all 路由挂在
+``driver.on_startup``，晚于它挂载的静态目录永远收不到请求。
+"""
+
+from pathlib import Path
+
+from nonebot import logger
+
+from amrita.plugins.webui.API import register_page
+from amrita.plugins.webui.service.plugin_assets import mount_plugin_assets
+
+from .config import CONFIG
+
+# 同时是挂载名、module_dir 与页面路径，宿主据此拼出产物 URL
+ASSET_NAME = "{{ asset }}"
+ASSET_DIR = Path(__file__).parent / "assets"
+
+
+def _mount_assets() -> bool:
+    """产物缺失时只告警，不阻断插件加载——页面会显示宿主的「产物不可用」提示。"""
+    try:
+        mount_plugin_assets(ASSET_NAME, ASSET_DIR)
+    except FileNotFoundError as exc:
+        logger.warning(f"[{ASSET_NAME}] 前端产物不可用：{exc}")
+        logger.warning(
+            f"[{ASSET_NAME}] 执行 cd frontend && bun install && bun run build 后重启"
+        )
+        return False
+    return True
+
+
+MOUNTED = _mount_assets()
+
+register_page(
+    path=f"/{ASSET_NAME}",
+    page_name=CONFIG.page_title,
+    category=CONFIG.page_category,
+    icon="flask-conical",
+    module_dir=ASSET_NAME,
+)

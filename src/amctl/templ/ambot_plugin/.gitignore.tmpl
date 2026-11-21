@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.env
+.python-version
+
+# 前端
+frontend/node_modules/
+
+# 前端产物由 CI 在发布前构建，不进版本库
+{{ module }}/assets/*
+!{{ module }}/assets/.gitkeep
+
+# 工具缓存
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+dist/
+build/

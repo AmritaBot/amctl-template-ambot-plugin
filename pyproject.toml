@@ -1,0 +1,45 @@
+[project]
+name = "amctl-template-ambot-plugin"
+version = "0.1.0"
+description = "amctl template: AmritaBot plugin with a WebUI page and frontend build pipeline"
+readme = "README.md"
+requires-python = ">=3.10, <3.15"
+dependencies = ["amctl>=0.1.2"]
+
+[project.urls]
+"Homepage" = "https://github.com/AmritaBot/amctl-template-ambot-plugin"
+"Source" = "https://github.com/AmritaBot/amctl-template-ambot-plugin"
+"Issue Tracker" = "https://github.com/AmritaBot/amctl-template-ambot-plugin/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["amctl", "amctl.*"]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.12.8",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+[tool.ruff.lint]
+select = [
+    "F",     # Pyflakes
+    "W",     # pycodestyle warnings
+    "E",     # pycodestyle errors
+    "UP",    # pyupgrade
+    "C4",    # flake8-comprehensions
+    "I",     # isort
+]
+
+[tool.amctl.project]
+project-type = "amctl_template"
+version = "0.1.0"
+created_at = "2026-11-21T12:55:00+00:00"
+
+[tool.amctl.scripts]
+lint = "uv run ruff check . --fix"
+sync = "uv sync"
+format = "uv run ruff format ."

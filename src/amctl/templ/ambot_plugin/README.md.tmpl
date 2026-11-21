@@ -1,0 +1,76 @@
+# {{ name }}
+
+{{ description }}
+
+由 amctl 的 ambot_plugin 模板生成，带一个可挂进 AmritaBot WebUI 侧边栏的示例页面。
+
+## 快速开始
+
+```bash
+uv sync                        # Python 侧
+cd frontend && bun install
+bun run build                  # 产物输出到 ../{{ module }}/assets/
+cd ..
+uv run amrita run             # 启动后打开 WebUI，侧边栏即可看到页面
+```
+
+前端改完重新 `bun run build` 再刷新页面即可：宿主按产物 mtime 拼版本参数，
+不需要重启 bot。
+
+## 目录结构
+
+```
+{{ module }}/
+├── __init__.py     # 插件元信息，import 即完成路由与页面注册
+├── config.py       # 配置项（页面标题、分组）
+├── api.py          # JSON 接口，注册在 /api/{{ asset }}
+├── webui.py        # 挂载前端产物 + 注册侧边栏页面
+└── assets/         # 构建产物（index.js / index.css），随包分发
+frontend/
+├── amrita-plugin.json  # 构建器配置：入口、产物目录、静态资源
+└── src/
+    ├── index.tsx       # 页面组件，默认导出
+    └── index.css       # 自带样式，运行期通过 injectCss 注入
+```
+
+## 页面是怎么被加载的
+
+`webui.py` 在 import 期做两件事：
+
+1. `mount_plugin_assets("{{ asset }}", assets/)` 把产物目录挂到 `/plugin-assets/{{ asset }}/`
+2. `register_page(..., module_dir="{{ asset }}")` 登记侧边栏与路由
+   （`path="/{{ asset }}"`，访问时宿主拼出 `index.js?v=<mtime>` 并 `import()`）
+
+两步都必须早于 `driver.on_startup` 的 catch-all 路由，所以只能写在 import 期。
+产物缺失时只打告警，页面会显示宿主的「产物不可用」提示，不会阻断插件加载。
+
+## 前端约定
+
+- 页面默认导出 React 组件；Router、QueryClient、主题由宿主负责
+- `react` / `react-dom` / `react-router-dom` / `lucide-react` 等由宿主通过
+  `window.__AMRITA_HOST__` 提供，构建器 `@amrita-constant/webui-plugin-kit`
+  会把它们换成再导出模块，插件里不会打进第二份 React
+- UI 组件从这个套件的 `/ui` 入口导入，运行期同样走 `window.__AMRITA_HOST__.UI`，
+  类型来自 `@amrita-constant/ambot-ui`
+- 数据请求用套件 `/runtime` 的 `pluginApi`，401 会交给宿主退回登录页
+- 样式请自带（`injectCss`）：宿主只生成自己源码里用过的 Tailwind 类，
+  插件里写 `bg-fuchsia-700` 这种冷门类会静默失效
+
+产物末尾会自动带 `export const amritaHostContract = 3`，宿主加载时比对契约版本。
+
+## 改点什么
+
+- 换页面标题/分组：`{{ module }}/config.py`
+- 加接口：在 `api.py` 里加路由，前端用 `/api/{{ asset }}/...` 请求
+- 换图标：`webui.py` 里的 `icon`，取 lucide 图标名
+- 加图片等静态资源：放进 `frontend/src/`，在 `amrita-plugin.json` 的 `assets` 里登记
+
+## 打包发布
+
+`uv build` 会把 `{{ module }}/assets/` 一起打进 wheel。仓库自带的 publish workflow
+已经按顺序做了前端构建 → uv build → uv publish，不要再手动跳过第一步。
+
+## 要求
+
+- AmritaBot >= {{ version }}（提供 `mount_plugin_assets` 与 `module_dir`）
+- 开发前端需要 bun；部署机不需要 Node，产物在包里

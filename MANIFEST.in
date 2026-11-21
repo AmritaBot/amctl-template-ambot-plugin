@@ -1,0 +1,2 @@
+recursive-include src *.tmpl *.tmpl.* *.pre
+include src/amctl/templ/ambot_plugin/{{ module }}/assets/.gitkeep

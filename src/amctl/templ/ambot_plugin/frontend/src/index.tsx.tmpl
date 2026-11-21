@@ -1,0 +1,116 @@
+/**
+ * 示例页面。宿主在运行期 `import()` 本模块并取 default 渲染，
+ * React、Router、QueryClient、UI 组件都由宿主提供，这里只写业务。
+ */
+import { useCallback, useEffect, useState } from "react";
+import { Plus, RefreshCw } from "lucide-react";
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Input,
+} from "@amrita-constant/webui-plugin-kit/ui";
+import { injectCss, pluginApi } from "@amrita-constant/webui-plugin-kit/runtime";
+
+// 自带样式：宿主只生成自己源码里用过的 Tailwind 类，插件写冷门类会静默失效
+injectCss(new URL("./index.css", import.meta.url).href, "{{ asset }}-style");
+
+interface Item {
+  id: number;
+  text: string;
+  created_at: string;
+}
+
+export default function Page() {
+  const [items, setItems] = useState<Item[]>([]);
+  const [text, setText] = useState("");
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  const reload = useCallback(async () => {
+    try {
+      const data = await pluginApi.get<{ items: Item[]; total: number }>(
+        "/api/{{ asset }}/items",
+      );
+      setItems(data.items);
+      setError("");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    }
+  }, []);
+
+  useEffect(() => {
+    void reload();
+  }, [reload]);
+
+  const submit = async () => {
+    const value = text.trim();
+    if (!value || busy) return;
+    setBusy(true);
+    try {
+      await pluginApi.post("/api/{{ asset }}/items", { text: value });
+      setText("");
+      await reload();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="{{ asset }}-page">
+      <Card>
+        <CardHeader>
+          <CardTitle>{{ page_title }}</CardTitle>
+          <CardDescription>
+            模板自带的示例页面：数据接口在 /api/{{ asset }}，产物在 /plugin-assets/{{ asset }}/。
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="{{ asset }}-row">
+            <Input
+              value={text}
+              placeholder="写点什么，回车提交"
+              onChange={(event) => setText(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") void submit();
+              }}
+            />
+            <Button onClick={() => void submit()} disabled={busy || !text.trim()}>
+              <Plus />
+              添加
+            </Button>
+            <Button variant="outline" onClick={() => void reload()} disabled={busy}>
+              <RefreshCw />
+              刷新
+            </Button>
+          </div>
+
+          {error ? <p className="{{ asset }}-error">{error}</p> : null}
+
+          <ul className="{{ asset }}-list">
+            {items.length === 0 ? (
+              <li className="{{ asset }}-empty">还没有记录，加一条试试。</li>
+            ) : (
+              items.map((item) => (
+                <li key={item.id} className="{{ asset }}-item">
+                  <span>{item.text}</span>
+                  <small>{item.created_at}</small>
+                </li>
+              ))
+            )}
+          </ul>
+
+          <p className="{{ asset }}-meta">
+            共 <Badge variant="secondary">{items.length}</Badge> 条
+          </p>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

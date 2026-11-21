@@ -1,0 +1,18 @@
+"""{{ description }}"""
+
+from nonebot.plugin import PluginMetadata, require
+
+# WebUI 的扩展点在宿主插件里：先声明依赖，再 import 自己的注册代码
+require("amrita.plugins.webui")
+
+from . import api, webui  # noqa: E402  import 即注册路由与页面
+
+__plugin_meta__ = PluginMetadata(
+    name="{{ name }}",
+    description="{{ description }}",
+    usage="打开 WebUI，在侧边栏找到「{{ page_title }}」页面。",
+    type="application",
+    supported_adapters={"~onebot.v11"},
+)
+
+__all__ = ["api", "webui"]

@@ -1,0 +1,86 @@
+[project]
+name = "{{ dist }}"
+version = "0.1.0"
+description = "{{ description }}"
+readme = "README.md"
+requires-python = ">=3.10, <3.14"
+dependencies = [
+    "amrita>={{ version }}",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/AmritaBot/{{ dist }}"
+"Source" = "https://github.com/AmritaBot/{{ dist }}"
+"Issue Tracker" = "https://github.com/AmritaBot/{{ dist }}/issues"
+
+[tool.setuptools.packages.find]
+include = ["{{ module }}*"]
+namespaces = false
+
+# 前端产物随包分发：pip 装完就有页面，不需要在部署机上装 Node
+[tool.setuptools.package-data]
+"{{ module }}" = ["assets/*"]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.12.8",
+    "pyright>=1.1.407",
+]
+
+[tool.uv]
+package = true
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+[tool.ruff.lint]
+select = [
+    "F",     # Pyflakes
+    "W",     # pycodestyle warnings
+    "E",     # pycodestyle errors
+    "UP",    # pyupgrade
+    "ASYNC", # flake8-async
+    "C4",    # flake8-comprehensions
+    "T10",   # flake8-debugger
+    "PYI",   # flake8-pyi
+    "PT",    # flake8-pytest-style
+    "Q",     # flake8-quotes
+    "RUF",   # Ruff-specific rules
+    "I",     # isort
+    "PERF",  # pylint-performance
+]
+ignore = [
+    "E402",   # module-import-not-at-top-of-file
+    "E501",   # line-too-long
+    "UP037",  # quoted-annotation
+    "RUF001", # ambiguous-unicode-character-string
+    "RUF002", # ambiguous-unicode-character-docstring
+    "RUF003", # ambiguous-unicode-character-comment
+]
+
+[tool.pyright]
+typeCheckingMode = "standard"
+
+[tool.nonebot]
+plugins = [
+    "amrita.plugins.chat",
+    "amrita.plugins.webui",
+    "{{ module }}",
+]
+adapters = [
+    { name = "OneBot V11", module_name = "nonebot.adapters.onebot.v11" },
+]
+
+[tool.amctl.project]
+project-type = "{{ project_type }}"
+version = "{{ version }}"
+created_at = "{{ created_at }}"
+
+[tool.amctl.scripts]
+lint = "uv run ruff check ."
+sync = "uv sync"
+format = "uv run ruff format ."
+run = "uv run amrita run"
+build = "uv build"
+webui = "bun run --cwd frontend build"
